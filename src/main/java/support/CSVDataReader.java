@@ -1,11 +1,7 @@
 package support;
 
 
-import ml.dmlc.xgboost4j.java.Rabit;
-import org.tensorflow.proto.framework.DataType;
-import org.tribuo.Example;
-import org.tribuo.Feature;
-import org.tribuo.MutableDataset;
+import org.tribuo.*;
 import org.tribuo.classification.Label;
 import org.tribuo.classification.LabelFactory;
 import org.tribuo.data.columnar.FieldProcessor;
@@ -22,20 +18,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.*;
 
-public class CSVDataReader {
+public class CSVDataReader{
     private Path csvPath;
 
     private List<String> csvLines;
 
     private HashMap<String, MutableDataset<Label>> generatedData;
 
+    /**
+     * Set up the reader and read the CSV lines
+     * @param csvPath the path to the CSV file
+     * @throws IOException from the readAllLines method call
+     */
     public CSVDataReader(String csvPath) throws IOException {
         this.csvPath = Paths.get(csvPath);
         csvLines = Files.readAllLines(this.csvPath, StandardCharsets.UTF_8);
@@ -43,7 +39,13 @@ public class CSVDataReader {
         generatedData = new HashMap<>();
     }
 
-    public void generateDataColumn(String name, Object dataType){
+    /**
+     * Load data from a specific column in your CSV file.
+     * @param name the name of the column being read
+     * @param dataType the type of data being read. Use Double.class or String.class
+     * @return <h2 style="background-color:White;">THE CASTED DATASET TO USE BROADLY!</h2>
+     */
+    public Dataset generateDataColumn(String name, Object dataType){
         var responseProcessor = new FieldResponseProcessor(name,"UNK",new LabelFactory());
 
         FieldProcessor processor;
@@ -67,19 +69,22 @@ public class CSVDataReader {
 
         var csvSource = new CSVDataSource<Label>(csvPath,rowProcessor,true);
 
-        generatedData.put(name, new MutableDataset<Label>(csvSource));
+        return new MutableDataset<>(csvSource);
     }
 
 
-    public MutableDataset<Label> getDataColumn(String name){
+    public MutableDataset<Label> getMutableDataset(String name){
         return generatedData.get(name);
     }
 
-    public Label getData(String columnName, int index){
-        return getOutput(getDataColumn(columnName).getExample(index));
+    public Label getData(String name, int index){
+        return getOutput(getMutableDataset(name).getExample(index));
     }
+
 
     private Label getOutput(Example<Label> e) {
         return e.getOutput();
     }
+
+
 }

@@ -1,7 +1,5 @@
-import ml.dmlc.xgboost4j.java.Rabit;
 import org.tribuo.*;
 import org.tribuo.classification.Label;
-import org.tribuo.data.columnar.processors.field.DoubleFieldProcessor;
 import support.CSVDataReader;
 
 import java.io.IOException;
@@ -13,10 +11,10 @@ import java.util.stream.StreamSupport;
 public class DataCSVRead {
     public static void main(String[] args) throws IOException {
 
-        CSVDataReader reader = new CSVDataReader("C:\\Users\\zenith\\Downloads\\data.csv");
+        CSVDataReader reader = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\e^x_data.csv");
         reader.generateDataColumn("data", Double.class);
 
-        var data = reader.getDataColumn("data");
+        var data = reader.getMutableDataset("data");
 
         System.out.println(reader.getData("data", 1));
     }
