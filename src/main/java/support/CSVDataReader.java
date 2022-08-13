@@ -11,6 +11,7 @@ import org.tribuo.data.columnar.processors.field.TextFieldProcessor;
 import org.tribuo.data.columnar.processors.response.FieldResponseProcessor;
 import org.tribuo.data.csv.CSVDataSource;
 import org.tribuo.data.text.impl.BasicPipeline;
+import org.tribuo.evaluation.TrainTestSplitter;
 import org.tribuo.util.tokens.impl.BreakIteratorTokenizer;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ public strictfp class CSVDataReader{
      * A hashmap to store the generated datasets and access them later
      */
     private transient HashMap<String, MutableDataset<Label>> generatedData;
+    private transient HashMap<String, DataSource<Label>> generatedSources;
 
     /**
      * Set up the reader and read the CSV lines
@@ -44,6 +46,7 @@ public strictfp class CSVDataReader{
         this.csvPath = Paths.get(csvPath);
 
         generatedData = new HashMap<>();
+        generatedSources = new HashMap<>();
     }
 
     /**
@@ -75,6 +78,8 @@ public strictfp class CSVDataReader{
         var rowProcessor = new RowProcessor<Label>(responseProcessor, fieldProcessors);
 
         var csvSource = new CSVDataSource<Label>(csvPath,rowProcessor,true);
+        generatedSources.put(name, csvSource);
+
 
         return new MutableDataset<>(csvSource);
     }
@@ -88,6 +93,10 @@ public strictfp class CSVDataReader{
         return generatedData.get(name);
     }
 
+    public DataSource<Label> getDataSource(String name){
+        return generatedSources.get(name);
+    }
+
     /**
      * Get a specific value from a column at a specific index
      * @param name the name of the column
@@ -96,6 +105,10 @@ public strictfp class CSVDataReader{
      */
     public Label getData(String name, int index){
         return getOutput(getMutableDataset(name).getExample(index));
+    }
+
+    public TrainTestSplitter splitData(String name, double splitRatio, int seed){
+        return new TrainTestSplitter<>(getDataSource(name), splitRatio, seed);
     }
 
     /**
@@ -107,5 +120,7 @@ public strictfp class CSVDataReader{
         return e.getOutput();
     }
 
-
+    public Dataset convertSourceSet(DataSource<Label> source){
+        return new MutableDataset<>(source);
+    }
 }

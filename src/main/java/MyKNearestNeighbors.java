@@ -1,7 +1,4 @@
-import org.tribuo.Dataset;
-import org.tribuo.MutableDataset;
-import org.tribuo.clustering.ClusterID;
-import org.tribuo.clustering.example.GaussianClusterDataSource;
+import org.tribuo.clustering.evaluation.ClusteringEvaluator;
 import org.tribuo.clustering.kmeans.KMeansTrainer;
 import org.tribuo.util.Util;
 import support.CSVDataReader;
@@ -16,6 +13,9 @@ public class MyKNearestNeighbors {
         // Load the "values" column and store the CASTED Dataset object into data.
         var data = reader.generateDataColumn("values", Double.class);
 
+        var splitter = reader.splitData("values", 0.7, 42);
+
+
         // Create the KMeansTrainer - note that K++ is being used
         var trainer = new KMeansTrainer(
                 2,
@@ -28,7 +28,7 @@ public class MyKNearestNeighbors {
 
         // Measure training time
         var startTime = System.currentTimeMillis();
-        var model = trainer.train(data);
+        var model = trainer.train(reader.convertSourceSet(splitter.getTrain()));
         var endTime = System.currentTimeMillis();
         System.out.println("Training with 2 clusters took " + Util.formatDuration(startTime,endTime));
 
@@ -37,5 +37,11 @@ public class MyKNearestNeighbors {
         for (var centroid : centroids) {
             System.out.println(centroid);
         }
+
+        // Evaluate the model
+//        var eval = new ClusteringEvaluator();
+//
+//        var trainEvaluation = eval.evaluate(model, reader.getMutableDataset("values"));
+//        System.out.println(trainEvaluation.toString());
     }
 }

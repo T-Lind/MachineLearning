@@ -18,6 +18,9 @@ dependencies {
         // isTransitive = true // for build.gradle.kts (Kotlin)
     }
 
+    // https://mavenlibs.com/maven/dependency/org.knowm.xchart/xchart
+    implementation 'org.knowm.xchart:xchart:3.8.1'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
