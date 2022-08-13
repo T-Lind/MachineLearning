@@ -1,6 +1,7 @@
 import org.tribuo.*;
 import org.tribuo.classification.Label;
 import org.tribuo.classification.LabelFactory;
+import org.tribuo.data.columnar.FieldExtractor;
 import org.tribuo.data.columnar.FieldProcessor;
 import org.tribuo.data.columnar.ResponseProcessor;
 import org.tribuo.data.columnar.RowProcessor;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -40,27 +42,26 @@ import java.util.stream.StreamSupport;
 public class DataCSVRead {
     public static void main(String[] args) throws IOException {
         // Get the entire dataset
-        var csvPath = Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv");
+        //var csvPath = Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv");
+        var csvPath = Paths.get("C:\\Users\\zenith\\Downloads\\data.csv");
+
 
         // Read all lines from the dataset
         var csvLines = Files.readAllLines(csvPath, StandardCharsets.UTF_8);
 
 
-        var textPipeline = new BasicPipeline(new BreakIteratorTokenizer(Locale.US), 2);
-
-        var responseProcessor = new FieldResponseProcessor("disposition","UNK",new LabelFactory());
+        var responseProcessor = new FieldResponseProcessor("data","UNK",new LabelFactory());
 
         var fieldProcessors = new HashMap<String, FieldProcessor>();
-        fieldProcessors.put("fixed acidity", new DoubleFieldProcessor("fixed_acidity"));
+        fieldProcessors.put("data", new DoubleFieldProcessor("data"));
 
-        var acidityExtractor = new DoubleExtractor("fixed_acidity");
-        var rowProcessor = new RowProcessor<Label>(responseProcessor, fieldProcessors, Collections.emptySet());
+        var rowProcessor = new RowProcessor<Label>(responseProcessor, fieldProcessors);
 
 
         var csvSource = new CSVDataSource<Label>(csvPath,rowProcessor,true);
         var datasetFromCSV = new MutableDataset<Label>(csvSource);
 
-        datasetFromCSV.getExample(0);
+        System.out.println(datasetFromCSV.getExample(1));
     }
 
     public static void printExample(Example<Label> e) {
