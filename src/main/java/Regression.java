@@ -24,8 +24,13 @@ public class Regression {
         var regressionFactory = new RegressionFactory();
         var csvLoader = new CSVLoader<>(';',regressionFactory);
 
+        // Get the quality data from the wine dataset
         var wineSource
-                = csvLoader.loadDataSource(Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv"),"quality");
+                = csvLoader.loadDataSource(
+                        Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv"),
+                "quality");
+
+
         var splitter = new TrainTestSplitter<>(wineSource, 0.7f, 0L);
         Dataset<Regressor> trainData = new MutableDataset<>(splitter.getTrain());
         Dataset<Regressor> evalData = new MutableDataset<>(splitter.getTest());
