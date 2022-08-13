@@ -10,7 +10,6 @@ import java.util.stream.StreamSupport;
  */
 public class DataCSVRead {
     public static void main(String[] args) throws IOException {
-
         CSVDataReader reader = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\e^x_data.csv");
         reader.generateDataColumn("data", Double.class);
 

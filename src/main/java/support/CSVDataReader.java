@@ -20,12 +20,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class CSVDataReader{
-    private Path csvPath;
+/**
+ * A custom wrapper class to ease reading data from a csv file!
+ * Specify a path and you can generate the dataset objects for each column.
+ */
+public strictfp class CSVDataReader{
+    /**
+     * The file path object to the csv file
+     */
+    private transient Path csvPath;
 
-    private List<String> csvLines;
-
-    private HashMap<String, MutableDataset<Label>> generatedData;
+    /**
+     * A hashmap to store the generated datasets and access them later
+     */
+    private transient HashMap<String, MutableDataset<Label>> generatedData;
 
     /**
      * Set up the reader and read the CSV lines
@@ -34,7 +42,6 @@ public class CSVDataReader{
      */
     public CSVDataReader(String csvPath) throws IOException {
         this.csvPath = Paths.get(csvPath);
-        csvLines = Files.readAllLines(this.csvPath, StandardCharsets.UTF_8);
 
         generatedData = new HashMap<>();
     }
@@ -72,16 +79,30 @@ public class CSVDataReader{
         return new MutableDataset<>(csvSource);
     }
 
-
+    /**
+     * Get the mutable <b>(NON CASTED, UNLIKE WHAT THE GENERATE METHOD RETURNS)</b> column dataset from the hashmap
+     * @param name is the name of the column dataset
+     * @return the column mutable dataset
+     */
     public MutableDataset<Label> getMutableDataset(String name){
         return generatedData.get(name);
     }
 
+    /**
+     * Get a specific value from a column at a specific index
+     * @param name the name of the column
+     * @param index the index in the column (row, 0=first)
+     * @return the Label value of whatever's in there.
+     */
     public Label getData(String name, int index){
         return getOutput(getMutableDataset(name).getExample(index));
     }
 
-
+    /**
+     * Get the output of an Example object
+     * @param e the example object
+     * @return the Label object from the input Example
+     */
     private Label getOutput(Example<Label> e) {
         return e.getOutput();
     }
