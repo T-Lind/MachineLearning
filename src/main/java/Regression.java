@@ -27,8 +27,7 @@ public class Regression {
         // Get the quality data from the wine dataset
         var wineSource
                 = csvLoader.loadDataSource(
-                        Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv"),
-                "quality");
+                        Paths.get("C:\\Users\\zenith\\Downloads\\wine-quality-master\\wine-quality-master\\winequality\\winequality-red.csv"), "quality");
 
 
         var splitter = new TrainTestSplitter<>(wineSource, 0.7f, 0L);

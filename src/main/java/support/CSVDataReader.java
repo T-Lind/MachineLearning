@@ -116,6 +116,11 @@ public strictfp class CSVDataReader{
         return generatedData.get(name);
     }
 
+    /**
+     * Get the dataSource object for a certain column/generatedSource
+     * @param name the name to get
+     * @return the datasource object for name
+     */
     public DataSource<Label> getDataSource(String name){
         return generatedSources.get(name);
     }
