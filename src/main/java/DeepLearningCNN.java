@@ -34,12 +34,12 @@ public class DeepLearningCNN {
         var gradAlgorithm = GradientOptimiser.ADAGRAD;
         var gradParams = Map.of("learningRate",0.1f,"initialAccumulatorValue",0.01f);
 
-
+        // Create the CNN object info
         var mnistCNNTuple = CNNExamples.buildLeNetGraph(mnistInputName,28,255,mnistTrain.getOutputs().size());
         var mnistImageConverter = new ImageConverter(mnistInputName,28,28,1);
 
 
-
+        // Create the CNN trainer
         var mnistCNNTrainer = new TensorFlowTrainer<Label>(mnistCNNTuple.graphDef,
                 mnistCNNTuple.outputName, // the name of the logit operation
                 gradAlgorithm,            // the gradient descent algorithm
@@ -52,10 +52,10 @@ public class DeepLearningCNN {
                 -1  // disable logging of the loss value
         );
 
-
+        // Train the CNN
         var cnnModel = DataProc.train(mnistTrain, mnistCNNTrainer);
 
-
+        // Evaluate how the neural network did
         var cnnPredictions = cnnModel.predict(mnistTest);
         var cnnEvaluation = labelEval.evaluate(cnnModel,cnnPredictions,mnistTest.getProvenance());
         DataProc.evaluate(mnistTest, cnnModel, (Evaluator) cnnEvaluation);
