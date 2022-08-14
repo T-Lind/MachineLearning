@@ -3,7 +3,6 @@ import org.tribuo.classification.Label;
 import org.tribuo.classification.LabelFactory;
 import org.tribuo.classification.evaluation.LabelEvaluator;
 import org.tribuo.datasource.IDXDataSource;
-import org.tribuo.evaluation.Evaluator;
 import org.tribuo.interop.tensorflow.*;
 import org.tribuo.interop.tensorflow.example.CNNExamples;
 import org.tribuo.interop.tensorflow.example.MLPExamples;
@@ -34,12 +33,12 @@ public class DeepLearningCNN {
         var gradAlgorithm = GradientOptimiser.ADAGRAD;
         var gradParams = Map.of("learningRate",0.1f,"initialAccumulatorValue",0.01f);
 
-        // Create the CNN object info
+
         var mnistCNNTuple = CNNExamples.buildLeNetGraph(mnistInputName,28,255,mnistTrain.getOutputs().size());
         var mnistImageConverter = new ImageConverter(mnistInputName,28,28,1);
 
 
-        // Create the CNN trainer
+
         var mnistCNNTrainer = new TensorFlowTrainer<Label>(mnistCNNTuple.graphDef,
                 mnistCNNTuple.outputName, // the name of the logit operation
                 gradAlgorithm,            // the gradient descent algorithm
@@ -47,17 +46,20 @@ public class DeepLearningCNN {
                 mnistImageConverter,      // the input feature converter
                 mnistOutputConverter,     // the output label converter
                 16, // training batch size
-                3,  // number of training epochs
+                10,  // number of training epochs
                 16, // test batch size of the trained model
                 -1  // disable logging of the loss value
         );
 
-        // Train the CNN
-        var cnnModel = DataProc.train(mnistTrain, mnistCNNTrainer);
+        // Training the model
+        var cnnStart = System.currentTimeMillis();
+        var cnnModel = mnistCNNTrainer.train(mnistTrain);
+        var cnnEnd = System.currentTimeMillis();
+        System.out.println("MNIST CNN training took " + Util.formatDuration(cnnStart,cnnEnd));
 
-        // Evaluate how the neural network did
         var cnnPredictions = cnnModel.predict(mnistTest);
         var cnnEvaluation = labelEval.evaluate(cnnModel,cnnPredictions,mnistTest.getProvenance());
-        DataProc.evaluate(mnistTest, cnnModel, (Evaluator) cnnEvaluation);
+        System.out.println(cnnEvaluation.toString());
+        System.out.println(cnnEvaluation.getConfusionMatrix().toString());
     }
 }
