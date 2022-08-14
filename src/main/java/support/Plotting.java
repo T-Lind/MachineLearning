@@ -1,6 +1,8 @@
 package support;
 
 import java.awt.Color;
+
+import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -55,8 +57,6 @@ public class Plotting {
         }
     }
 
-
-
     // A method which extracts the (x,y) points from the dataset
     public static void setXandYListsFromDataset(List<Double> xList, List<Double> yList, Dataset<ClusterID> dataset) {
         for (Example<ClusterID> ex : dataset) {
@@ -67,5 +67,9 @@ public class Plotting {
                 i++;
             }
         }
+    }
+
+    public static void displayChart(XYChart chart){
+        new SwingWrapper<XYChart>(chart).displayChart();
     }
 }

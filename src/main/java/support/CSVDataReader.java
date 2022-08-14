@@ -4,10 +4,13 @@ package support;
 import org.tribuo.*;
 import org.tribuo.classification.Label;
 import org.tribuo.classification.LabelFactory;
+import org.tribuo.clustering.ClusterID;
+import org.tribuo.clustering.ClusteringFactory;
 import org.tribuo.data.columnar.FieldProcessor;
 import org.tribuo.data.columnar.RowProcessor;
 import org.tribuo.data.columnar.processors.field.DoubleFieldProcessor;
 import org.tribuo.data.columnar.processors.field.TextFieldProcessor;
+import org.tribuo.data.columnar.processors.response.EmptyResponseProcessor;
 import org.tribuo.data.columnar.processors.response.FieldResponseProcessor;
 import org.tribuo.data.csv.CSVDataSource;
 import org.tribuo.data.text.impl.BasicPipeline;
@@ -85,6 +88,26 @@ public strictfp class CSVDataReader{
     }
 
     /**
+     * Generate data from a CSV file with 2d data
+     * @param x the x label
+     * @param y the y label
+     * @return the MutableDataset containing the data
+     */
+    public MutableDataset<ClusterID> generate2dDataDouble(String x, String y){
+        Map<String, FieldProcessor> regexMappingProcessors = new HashMap<>();
+
+        regexMappingProcessors.put(x, new DoubleFieldProcessor(x));
+        regexMappingProcessors.put(y, new DoubleFieldProcessor(y));
+
+        RowProcessor<ClusterID> rowProcessor = new RowProcessor<>(new EmptyResponseProcessor<>(new ClusteringFactory()), regexMappingProcessors);
+
+        var csvDataSource = new CSVDataSource<>(csvPath, rowProcessor, false);
+        var dataset = new MutableDataset<>(csvDataSource);
+
+        return dataset;
+    }
+
+    /**
      * Get the mutable <b>(NON CASTED, UNLIKE WHAT THE GENERATE METHOD RETURNS)</b> column dataset from the hashmap
      * @param name is the name of the column dataset
      * @return the column mutable dataset
@@ -107,6 +130,13 @@ public strictfp class CSVDataReader{
         return getOutput(getMutableDataset(name).getExample(index));
     }
 
+    /**
+     * Split the test data and training data
+     * @param name the name of the data
+     * @param splitRatio the ratio to split the data at
+     * @param seed the random seed to use when splitting
+     * @return the TrainTestSplitter object
+     */
     public TrainTestSplitter splitData(String name, double splitRatio, int seed){
         return new TrainTestSplitter<>(getDataSource(name), splitRatio, seed);
     }
@@ -120,6 +150,11 @@ public strictfp class CSVDataReader{
         return e.getOutput();
     }
 
+    /**
+     * Convert from a DataSource to a MutableDataset.
+     * @param source the input datasource (Probably a csvDataSource)
+     * @return the MutableDataset version of the same data
+     */
     public Dataset convertSourceSet(DataSource<Label> source){
         return new MutableDataset<>(source);
     }
