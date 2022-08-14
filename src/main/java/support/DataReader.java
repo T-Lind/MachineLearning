@@ -14,12 +14,12 @@ import org.tribuo.data.columnar.processors.response.EmptyResponseProcessor;
 import org.tribuo.data.columnar.processors.response.FieldResponseProcessor;
 import org.tribuo.data.csv.CSVDataSource;
 import org.tribuo.data.text.impl.BasicPipeline;
+import org.tribuo.datasource.LibSVMDataSource;
 import org.tribuo.evaluation.TrainTestSplitter;
+import org.tribuo.multilabel.MultiLabelFactory;
 import org.tribuo.util.tokens.impl.BreakIteratorTokenizer;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -28,11 +28,11 @@ import java.util.*;
  * A custom wrapper class to ease reading data from a csv file!
  * Specify a path and you can generate the dataset objects for each column.
  */
-public strictfp class CSVDataReader{
+public final strictfp class DataReader {
     /**
      * The file path object to the csv file
      */
-    private transient Path csvPath;
+    private transient Path path;
 
     /**
      * A hashmap to store the generated datasets and access them later
@@ -42,11 +42,11 @@ public strictfp class CSVDataReader{
 
     /**
      * Set up the reader and read the CSV lines
-     * @param csvPath the path to the CSV file
+     * @param path the path to the CSV file
      * @throws IOException from the readAllLines method call
      */
-    public CSVDataReader(String csvPath) throws IOException {
-        this.csvPath = Paths.get(csvPath);
+    public DataReader(String path) throws IOException {
+        this.path = Paths.get(path);
 
         generatedData = new HashMap<>();
         generatedSources = new HashMap<>();
@@ -80,11 +80,21 @@ public strictfp class CSVDataReader{
 
         var rowProcessor = new RowProcessor<Label>(responseProcessor, fieldProcessors);
 
-        var csvSource = new CSVDataSource<Label>(csvPath,rowProcessor,true);
+        var csvSource = new CSVDataSource<Label>(path,rowProcessor,true);
         generatedSources.put(name, csvSource);
 
 
         return new MutableDataset<>(csvSource);
+    }
+
+    /**
+     * Load an SVM file from the constructor path and return it as a dataset
+     * @return the dataset with the SVM information
+     */
+    public MutableDataset generateSVM() throws IOException {
+        var factory = new MultiLabelFactory();
+        var source = new LibSVMDataSource<>(path, factory);
+        return new MutableDataset<>(source);
     }
 
     /**
@@ -101,7 +111,7 @@ public strictfp class CSVDataReader{
 
         RowProcessor<ClusterID> rowProcessor = new RowProcessor<>(new EmptyResponseProcessor<>(new ClusteringFactory()), regexMappingProcessors);
 
-        var csvDataSource = new CSVDataSource<>(csvPath, rowProcessor, false);
+        var csvDataSource = new CSVDataSource<>(path, rowProcessor, false);
         var dataset = new MutableDataset<>(csvDataSource);
 
         return dataset;
@@ -153,14 +163,5 @@ public strictfp class CSVDataReader{
      */
     private Label getOutput(Example<Label> e) {
         return e.getOutput();
-    }
-
-    /**
-     * Convert from a DataSource to a MutableDataset.
-     * @param source the input datasource (Probably a csvDataSource)
-     * @return the MutableDataset version of the same data
-     */
-    public Dataset convertSourceSet(DataSource<Label> source){
-        return new MutableDataset<>(source);
     }
 }

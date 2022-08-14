@@ -1,5 +1,3 @@
-package support;
-
 import org.tribuo.*;
 import org.tribuo.util.Util;
 import org.tribuo.anomaly.*;
@@ -17,7 +15,7 @@ public class AnomalyDetection {
         var data = new MutableDataset<>(new GaussianAnomalyDataSource(2000,/* number of examples */
                 0.0f,/*fraction anomalous */
                 1L/* RNG seed */));
-        var test = new MutableDataset<>(new GaussianAnomalyDataSource(2000,0.2f,2L));
+        var test = new MutableDataset<>(new GaussianAnomalyDataSource(2000,0.3f,42));
 
         var params = new SVMParameters<>(new SVMAnomalyType(SVMAnomalyType.SVMMode.ONE_CLASS), KernelType.RBF);
         params.setGamma(1.0);

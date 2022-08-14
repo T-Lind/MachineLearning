@@ -1,14 +1,14 @@
-import org.tribuo.clustering.evaluation.ClusteringEvaluator;
 import org.tribuo.clustering.kmeans.KMeansTrainer;
 import org.tribuo.util.Util;
-import support.CSVDataReader;
+import support.DataProc;
+import support.DataReader;
 
 import java.io.IOException;
 
 public class MyKNearestNeighbors {
     public static void main(String[] args) throws IOException {
         // Create a reader object and feed it the csv path
-        CSVDataReader reader = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\random_distro_two_centroids.csv");
+        DataReader reader = new DataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\random_distro_two_centroids.csv");
 
         // Load the "values" column and store the CASTED Dataset object into data.
         var data = reader.generateDataColumn("values", Double.class);
@@ -28,7 +28,7 @@ public class MyKNearestNeighbors {
 
         // Measure training time
         var startTime = System.currentTimeMillis();
-        var model = trainer.train(reader.convertSourceSet(splitter.getTrain()));
+        var model = trainer.train(DataProc.convertSourceSet(splitter.getTrain()));
         var endTime = System.currentTimeMillis();
         System.out.println("Training with 2 clusters took " + Util.formatDuration(startTime,endTime));
 

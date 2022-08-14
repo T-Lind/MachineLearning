@@ -1,6 +1,6 @@
 import org.tribuo.*;
 import org.tribuo.classification.Label;
-import support.CSVDataReader;
+import support.DataReader;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -10,7 +10,7 @@ import java.util.stream.StreamSupport;
  */
 public class DataCSVRead {
     public static void main(String[] args) throws IOException {
-        CSVDataReader reader = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\e^x_data.csv");
+        DataReader reader = new DataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\e^x_data.csv");
         reader.generateDataColumn("data", Double.class);
 
         var data = reader.getMutableDataset("data");

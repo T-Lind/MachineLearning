@@ -1,24 +1,11 @@
-import org.knowm.xchart.BitmapEncoder;
-import org.knowm.xchart.QuickChart;
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import org.tribuo.Dataset;
-import org.tribuo.MutableDataset;
-import org.tribuo.clustering.ClusterID;
-import org.tribuo.clustering.ClusteringFactory;
 import org.tribuo.clustering.hdbscan.HdbscanTrainer;
-import org.tribuo.data.columnar.FieldProcessor;
-import org.tribuo.data.columnar.RowProcessor;
-import org.tribuo.data.columnar.processors.field.DoubleFieldProcessor;
-import org.tribuo.data.columnar.processors.response.EmptyResponseProcessor;
-import org.tribuo.data.csv.CSVDataSource;
-import support.CSVDataReader;
+import support.DataReader;
 import support.Plotting;
 
 import java.awt.*;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -27,7 +14,7 @@ import static support.Plotting.getNewXYChart;
 public class Clustering {
     public static void main(String[] args) throws IOException {
         // Create a new CSVDataReader object to read the 2d data from
-        var reader = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\simple-2d-data-train.csv");
+        var reader = new DataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\simple-2d-data-train.csv");
 
         // Get the dataset from the 2d data in the CSVDataReader
         var dataset = reader.generate2dDataDouble("Feature1", "Feature2");
@@ -78,7 +65,7 @@ public class Clustering {
         System.out.println(model.getOutlierScores().get(0));
 
         // Load the prediction data
-        var predictData = new CSVDataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\simple-2d-data-predict.csv");
+        var predictData = new DataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\simple-2d-data-predict.csv");
         var predictDataset = predictData.generate2dDataDouble("Feature1","Feature2");
 
         // Arrange the prediction data into two lists
