@@ -11,6 +11,11 @@ import org.tribuo.util.Util;
  */
 public final strictfp class DataProc {
     /**
+     * Path to my dataset folder
+     */
+    public static final String DATASETS = "C:\\Users\\zenith\\Documents\\MyDatasets\\";
+
+    /**
      * Convert from a DataSource to a MutableDataset.
      * @param source the input datasource (Probably a csvDataSource)
      * @return the MutableDataset version of the same data

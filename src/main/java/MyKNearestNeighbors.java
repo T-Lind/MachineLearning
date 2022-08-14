@@ -9,7 +9,7 @@ import java.io.IOException;
 public class MyKNearestNeighbors {
     public static void main(String[] args) throws IOException {
         // Create a reader object and feed it the csv path
-        DataReader reader = new DataReader("C:\\Users\\zenith\\Documents\\MyDatasets\\random_distro_two_centroids.csv");
+        DataReader reader = new DataReader(DataProc.DATASETS+"random_distro_two_centroids.csv");
 
         // Split the data
         var splitter = reader.splitData("values", 0.7, 42);
