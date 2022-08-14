@@ -28,8 +28,8 @@ public class MultiLabelClassification {
         var test = reader2.generateSVM();
 
         // Print data size
-        System.out.println(String.format("Training data size = %d, number of features = %d, number of classes = %d",train.size(),train.getFeatureMap().size(),train.getOutputInfo().size()));
-        System.out.println(String.format("Testing data size = %d, number of features = %d, number of classes = %d",test.size(),test.getFeatureMap().size(),test.getOutputInfo().size()));
+        System.out.printf("Training data size = %d, number of features = %d, number of classes = %d%n",train.size(),train.getFeatureMap().size(),train.getOutputInfo().size());
+        System.out.printf("Testing data size = %d, number of features = %d, number of classes = %d%n",test.size(),test.getFeatureMap().size(),test.getOutputInfo().size());
 
         // Create a linear trainer and train it
         var linTrainer = new LinearSGDTrainer(new BinaryCrossEntropy(),new AdaGrad(0.1,0.1),5,1000,1,Trainer.DEFAULT_SEED);
@@ -43,20 +43,8 @@ public class MultiLabelClassification {
         // Evaluate the models and calculate the evaluation time
         var eval = new MultiLabelEvaluator();
 
-        var linTStartTime = System.currentTimeMillis();
-        var linEval = eval.evaluate(linModel,test);
-        var linTEndTime = System.currentTimeMillis();
-        System.out.println();
-        System.out.println("Linear model evaluation took " + Util.formatDuration(linTStartTime,linTEndTime));
-        System.out.println(linEval);
-
-        var dtTStartTime = System.currentTimeMillis();
-        var dtEval = eval.evaluate(dtModel,test);
-        var dtTEndTime = System.currentTimeMillis();
-        System.out.println();
-        System.out.println("Tree model evaluation took " + Util.formatDuration(dtTStartTime,dtTEndTime));
-        System.out.println(dtEval);
-
+        DataProc.evaluate(test, linModel, eval);
+        DataProc.evaluate(test, dtModel, eval);
 
 
     }
