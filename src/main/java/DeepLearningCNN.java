@@ -26,9 +26,6 @@ public class DeepLearningCNN {
         // Build classification model - multilayer perceptron is MLP, which is also known as a feedforward ANN
         var mnistInputName = "MNIST_INPUT";
 
-        // Create data converters
-        var mnistOutputConverter = new LabelConverter();
-
         // Define the parameters of the MLP training algorithm
         var gradAlgorithm = GradientOptimiser.ADAGRAD;
         var gradParams = Map.of("learningRate",0.1f,"initialAccumulatorValue",0.01f);
@@ -37,14 +34,12 @@ public class DeepLearningCNN {
         var mnistCNNTuple = CNNExamples.buildLeNetGraph(mnistInputName,28,255,mnistTrain.getOutputs().size());
         var mnistImageConverter = new ImageConverter(mnistInputName,28,28,1);
 
-
-
         var mnistCNNTrainer = new TensorFlowTrainer<Label>(mnistCNNTuple.graphDef,
                 mnistCNNTuple.outputName, // the name of the logit operation
                 gradAlgorithm,            // the gradient descent algorithm
                 gradParams,               // the gradient descent hyperparameters
                 mnistImageConverter,      // the input feature converter
-                mnistOutputConverter,     // the output label converter
+                new LabelConverter(),     // the output label converter
                 16, // training batch size
                 10,  // number of training epochs
                 16, // test batch size of the trained model

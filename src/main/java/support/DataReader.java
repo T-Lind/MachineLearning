@@ -58,21 +58,21 @@ public final strictfp class DataReader {
      * @param dataType the type of data being read. Use Double.class or String.class
      * @return <h2 style="background-color:White;">THE CASTED DATASET TO USE BROADLY!</h2>
      */
-    public Dataset generateDataColumn(String name, Object dataType){
+    public <Type> Dataset generateDataColumn(String name, Type dataType){
         var responseProcessor = new FieldResponseProcessor(name,"UNK",new LabelFactory());
 
         FieldProcessor processor;
 
 
-        if(dataType == Double.class){
+        if(dataType.getClass() == Double.class){
             processor = new DoubleFieldProcessor(name);
         }
-        else if(dataType == String.class){
+        else if(dataType.getClass() == String.class){
             var textPipeline = new BasicPipeline(new BreakIteratorTokenizer(Locale.US),2);
             processor = new TextFieldProcessor(name, textPipeline);
         }
         else{
-            throw new RuntimeException("Improper dataType specified in CSVDataReader.generateDataColumn()");
+            throw new IllegalArgumentException("Improper dataType specified in CSVDataReader.generateDataColumn()");
         }
 
         var fieldProcessors = new HashMap<String, FieldProcessor>();
